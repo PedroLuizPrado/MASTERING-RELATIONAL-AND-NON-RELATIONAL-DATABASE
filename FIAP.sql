@@ -1,6 +1,5 @@
 @ 'C:\Users\labsfiap\Desktop\MASTERING-RELATIONAL-AND-NON-RELATIONAL-DATABASE\script_modelo_pedido.SQL';
 
-
 INSERT INTO PAIS SELECT * FROM PF1788.PAIS;
 INSERT INTO ESTADO SELECT * FROM PF1788.ESTADO;
 INSERT INTO CIDADE SELECT * FROM PF1788.CIDADE;
@@ -20,7 +19,6 @@ INSERT INTO PEDIDO SELECT * FROM PF1788.PEDIDO;
 INSERT INTO HISTORICO_PEDIDO SELECT * FROM PF1788.HISTORICO_PEDIDO;
 INSERT INTO ITEM_PEDIDO SELECT * FROM PF1788.ITEM_PEDIDO;
 
-
 SELECT * FROM PF1788.PAIS;
 SELECT * FROM PF1788.ESTADO;
 SELECT * FROM PF1788.CIDADE;
@@ -39,7 +37,6 @@ SELECT * FROM PF1788.CLIENTE_VENDEDOR;
 SELECT * FROM PF1788.PEDIDO;
 SELECT * FROM PF1788.HISTORICO_PEDIDO;
 SELECT * FROM PF1788.ITEM_PEDIDO;
-
 
 
 
@@ -68,3 +65,29 @@ BEGIN
         END LOOP;
     END;
 
+
+
+
+set SERVEROUTPUT on;
+BEGIN 
+ FOR i In (
+ SELECT 
+    hp.cod_cliente,
+    cli.nom_cliente,
+    round(AVG(hp.val_total_pedido),
+    2) media
+FROM
+        historico_pedido hp
+        INNER JOIN cliente cli ON  hp.cod_cliente = cli.cod_cliente
+        WHERE 
+        hp.cod_cliente = &cliente
+        GROUP BY 
+        hp.cod_cliente,
+        cli.nom_cliente
+  ) LOOP
+    dbms_output.put_line('O CLIENTE DE NOME '
+                        || i.nom_cliente ||
+                        'TEVE A MÉDIA DE ' ||
+                        i.media || 'DE COMPRAS');
+  END LOOP;
+  END;
