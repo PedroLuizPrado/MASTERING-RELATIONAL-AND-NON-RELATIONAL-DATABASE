@@ -40,3 +40,31 @@ SELECT * FROM PF1788.PEDIDO;
 SELECT * FROM PF1788.HISTORICO_PEDIDO;
 SELECT * FROM PF1788.ITEM_PEDIDO;
 
+
+
+
+set SERVEROUTPUT on;
+
+BEGIN 
+    FOR x IN (
+    SELECT
+        a.cod_produto,
+        b.nom_produto,
+        SUM(qtd_movimentacao_estoque) qtd
+    FROM
+        movimento_estoque a
+        INNER JOIN produto b ON a.cod_produto = b.cod_produto
+    WHERE 
+    a.cod_produto = &produto
+    GROUP BY
+        a.cod_produto,
+        b.nom_produto
+    ) LOOP
+        dbms_output.put_line('O Produto de Código '
+        || x.cod_produto || 'Com Descrição ' || x.nom_produto 
+        || 'Tem o Total de: ' 
+        || x.qtd || 'Produtos no Estoque');
+        
+        END LOOP;
+    END;
+
